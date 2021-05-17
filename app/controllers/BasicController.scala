@@ -22,11 +22,6 @@ class BasicController @Inject()(cc: ControllerComponents,
 
   def getOneVehicleName(vehicleName: String) = Action { implicit request: Request[AnyContent] =>
 
-    //    dataRepository.getVehicle(vehicleName) map { vehicle =>
-    //      // If the vehicle was found, return a 200 with the post data as JSON
-    //      Ok(Json.toJson(vehicle))
-    //    } getOrElse NotFound // otherwise, return Not Found
-
     val vehicle = dataRepository.getVehicle(vehicleName)
      vehicle match {
       case Some(Vehicle(wheels,heavy,name)) => Ok(Json.toJson(vehicle.get))
