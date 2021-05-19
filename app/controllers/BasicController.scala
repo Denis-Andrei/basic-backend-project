@@ -1,6 +1,7 @@
 package controllers
+import akka.util.Helpers.Requiring
 import models.Vehicle
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{AbstractController, AnyContent, BaseController, ControllerComponents, Request}
@@ -28,5 +29,19 @@ class BasicController @Inject()(cc: ControllerComponents,
       case _ =>  NotFound
     }
 
+  }
+
+  def receiveForm() = Action { implicit request: Request[AnyContent] =>
+    val jsonReceived = request.body.asJson.get
+    val vehicleNameFromJsonReceived = jsonReceived.\("Vehicle Name").as[String]
+//    val vehicleNameFromJsonReceived = (jsonReceived \ "Vehicle Name").as[String]
+
+
+    val vehicle = dataRepository.getVehicle(vehicleNameFromJsonReceived)
+
+    vehicle match {
+      case Some(Vehicle(wheels,heavy,name)) => Ok(Json.toJson(vehicle.get))
+      case _ =>  NotFound
+    }
   }
 }
